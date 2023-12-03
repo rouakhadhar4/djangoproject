@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show Etudiant Records</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.15.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px; /* Increase padding for the entire body */
+            margin: 0; /* Remove default margin */
+        }
+
+        .jumbotron {
+            margin: 0; /* Remove default margin for the jumbotron */
+            padding: 2rem 1rem;
+            border-radius: 0.3rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 20px; /* Adjust margin as needed */
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+        }
+
+        .btn-primary a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .card {
+            margin-bottom: 40px;
+        }
+
+        .card-body {
+            padding: 1.50rem;
+        }
+
+        .thead-dark th {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .btn-success,
+        .btn-danger {
+            margin-right: 5px;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 20px; /* Adjust margin as needed */
+        }
+
+        .navbar {
+            margin-bottom: 20px; /* Add margin to separate navbar from the top */
+        }
+
+        .jumbotron {
+            background-color: #007bff;
+            color: white;
+            padding: 2rem 1rem;
+            margin-bottom: 2rem;
+            border-radius: 0.3rem;
+        }
+
+        .btn-add {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .stat-card {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 0.3rem;
+        }
+
+        .full-width-content {
+            width: 100%;
+            margin: 0; /* Remove default margin for full-width content */
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">ISET NABEUL</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/etudiant">Add New Etudiant</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="jumbotron text-center">
+        <h1 class="display-4">Manage Etudiant Records</h1>
+        <p class="lead">Effortlessly handle student information with our user-friendly interface.</p>
+    </div>
+
+    <div class="mb-3">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card stat-card bg-success text-white text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Admitted Students</h5>
+                        <p class="card-text">{{ admitted_count }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card bg-danger text-white text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Rejected Students</h5>
+                        <p class="card-text">{{ rejected_count }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card bg-info text-white text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Overall Class Average</h5>
+                        <p class="card-text">{{ overall_average }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive full-width-content">
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">CIN</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Prenom</th>
+                    <th scope="col">Age</th>
+                    <th scope="col">Adresse</th>
+                    <th scope="col">Telephone</th>
+                    <th scope="col">Moyenne</th>
+                    <th scope="col">Admis/refusé</th>
+                  
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for etudiant in etudiants %}
+                <tr>
+                    <td>{{ etudiant.cin }}</td>
+                    <td>{{ etudiant.nom }}</td>
+                    <td>{{ etudiant.prenom }}</td>
+                    <td>{{ etudiant.age }}</td>
+                    <td>{{ etudiant.adresse }}</td>
+                    <td>{{ etudiant.telephone }}</td>
+                    <td>{{ etudiant.moyenne }}</td>
+                    <td>
+                        {% if etudiant.moyenne >= 16 %}
+                            Admis avec mention Très Bien
+                        {% elif etudiant.moyenne >= 14 %}
+                             Admis avec mention Bien
+                        {% elif etudiant.moyenne >= 12 %}
+                            Admis avec mention Assez Bien
+                        {% elif etudiant.moyenne >= 10 %}
+                            Admis avec mention Passable
+                        {% else %}
+                            Refusé
+                        {% endif %}
+                    </td>
+                    
+                    <td>
+                        <a class="btn btn-success btn-sm" href="/edit_etudiant/{{ etudiant.id }}">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                        <a class="btn btn-danger btn-sm" href="/delete_etudiant/{{ etudiant.id }}">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!-- Add this form at the top or wherever you want the search form -->
+<!-- Add this form at the top or wherever you want the search form -->
+<form method="post" action="{% url 'search_etudiant' %}" class="form-inline my-2 my-lg-0">
+    {% csrf_token %}
+    <div class="input-group">
+        <input type="text" name="cin" class="form-control" placeholder="Enter CIN">
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </div>
+</form>
+
+<!-- Display error message if it exists -->
+{% if message %}
+    <p class="text-danger">{{ message }}</p>
+{% endif %}
+
+</form>
+
+
+<!-- ... (rest of the template) -->
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>
